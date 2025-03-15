@@ -1,6 +1,7 @@
+from fastapi import FastAPI
+from strawberry.fastapi import GraphQLRouter
 import strawberry
 from typing import List, Optional
-from datetime import date
 import sqlite3
 
 # Database connection
@@ -72,3 +73,15 @@ class Query:
         return fetch_vehicle_health(v_id, time_period)
 
 schema = strawberry.Schema(query=Query)
+
+# FastAPI app setup
+app = FastAPI()
+graphql_app = GraphQLRouter(schema)
+
+# Mount GraphQL endpoint
+app.include_router(graphql_app, prefix="/graphql")
+
+# Run FastAPI
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
